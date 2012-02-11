@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from svalidate import validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch
+from svalidate import validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime
 
 class Test(unittest.TestCase):
     def test_something(self, ):
@@ -184,8 +184,37 @@ class Test(unittest.TestCase):
                                                          'caption' : 'is>jijs'},
                                                         {'value' : 'eijfijf'}]}))
 
+        self.assertEqual(None, validate(DateTime(), {'year' : 1999,
+                                                     'month' : 10,
+                                                     'day' : 20,
+                                                     'hour' : 20,
+                                                     'minute' : 22,
+                                                     'second' : 22}))
 
-
+        self.assertNotEqual(None, validate(DateTime(), {'year' : 1999,
+                                                        'month' : 13,
+                                                        'day' : 20,
+                                                        'hour' : 20,
+                                                        'minute' : 22,
+                                                        'second' : 22}))
+        self.assertNotEqual(None, validate(DateTime(), {'year' : 2000.23,
+                                                        'month' : 10,
+                                                        'day' : 20,
+                                                        'hour' : 20,
+                                                        'minute' : 22,
+                                                        'second' : 22}))
+        self.assertNotEqual(None, validate(DateTime(), {'year' : 1999,
+                                                        'month' : 10,
+                                                        'day' : 20,
+                                                        'hour' : 20,
+                                                        'minute' : 44,
+                                                        'second' : '22'}))
+        self.assertNotEqual(None, validate(DateTime(), {'year' : 1999,
+                                                        'month' : 10,
+                                                        'day' : 20,
+                                                        'hour' : 20,
+                                                        'minute' : 22,
+                                                        'second' : 60}))
 
 
 if __name__ == "__main__":

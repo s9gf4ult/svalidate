@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import datetime
 
 
 def validate(template, data):
@@ -305,6 +306,29 @@ class RegexpMatch(Validator):
         else:
             return ': RegexpMatch "{0}" does not match pattern "{1}"'.format(data, self._patern)
 
+class DateTime(Validator):
+    """
+    """
+    def __call__(self, data):
+        """
+        Arguments:
+        - `data`:
+        """
+        r = _validate(u': DateTime {0}', {'year' : 0,
+                                          'month' : 0,
+                                          'day' : 0,
+                                          'hour' : 0,
+                                          'minute' : 0,
+                                          'second' : 0}, data)
+        if r != None:
+            return r
+        try:
+            datetime.datetime(*[data[a] for a in ['year', 'month', 'day', 'hour', 'minute', 'second']])
+        except Exception as e:
+            return u': can not construct datetime because {0}'.format(str(e))
+        else:
+            return None
+        
         
             
 _dispatch = {dict : dictDispatch,
