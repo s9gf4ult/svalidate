@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from svalidate import validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime
+from svalidate import validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime, Length
 
 class Test(unittest.TestCase):
     def test_something(self, ):
@@ -215,6 +215,16 @@ class Test(unittest.TestCase):
                                                         'hour' : 20,
                                                         'minute' : 22,
                                                         'second' : 60}))
+
+        self.assertEqual(None, validate(Length(low=2), "sdf"))
+        self.assertEqual(None, validate(Length(high=10), "asdfa"))
+        self.assertEqual(None, validate(Length(4, 7), "12345"))
+        
+        self.assertNotEqual(None, validate(Length(low=2), "f"))
+        self.assertNotEqual(None, validate(Length(high=10), "asdfssssssssssssa"))
+        self.assertNotEqual(None, validate(Length(4, 7), "345"))
+        self.assertNotEqual(None, validate(Length(2, 3), 33))
+        
 
 
 if __name__ == "__main__":

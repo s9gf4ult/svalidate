@@ -328,6 +328,40 @@ class DateTime(Validator):
             return u': can not construct datetime because {0}'.format(str(e))
         else:
             return None
+
+class Length(Validator):
+    """
+    """
+    
+    def __init__(self, low=0, high=None):
+        """
+        Arguments:
+        
+        - `low`:
+        - `high`:
+        """
+        self._low = low
+        self._high = high
+
+    def __call__(self, data):
+        """
+        Arguments:
+        
+        - `data`:
+        """
+        l = None
+        try:
+            l = len(data)
+        except Exception as e:
+            return u': {0}'.format(str(e))
+        if self._high != None:
+            if not (self._low <= l <= self._high):
+                return u': length must be between {0} and {1}, not {2}'.format(self._low, self._high, l)
+        else:
+            if not (self._low <= l):
+                return u': length must be grather than {0}, not {1}'.format(self._low, l)
+        return None
+    
         
         
             
