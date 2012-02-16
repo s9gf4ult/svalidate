@@ -11,7 +11,14 @@ VALUE_IS_NOT_AN_INT=3
 VALUE_IS_NOT_A_FLOAT=4
 VALUE_IS_NOT_A_BOOLEAN=5
 VALUE_IS_NOT_A_STRING=6
-
+ANY_VALIDATION_FAILED=7
+NO_ONE_VALIDATION_FAILED=8
+EACH_VALIDATION_FAILED=9
+REGEXP_MATCH_FAILED=10
+REGEXP_SEARCH_FAILED=11
+EQUAL_VALIDATION_FAILED=12
+DATETIME_VALIDATION_FAILED=13
+LENGTH_VALIDATION_FAILED=14
 
 
 class Validate(object):
@@ -96,7 +103,7 @@ class Validate(object):
                                      'code' : nmb,
                                      'error' : erl})
         else:
-            appender.append({'type' : 'list',
+            appender.append({'type' : 'value',
                              'code' : VALUE_IS_NOT_A_LIST,
                              'caption' : '{0} is not a list'.format(data)})
 
@@ -113,7 +120,7 @@ class Validate(object):
                                      'code' : nmb,
                                      'error' : erl})
         else:
-            appender.append({'type' : 'set',
+            appender.append({'type' : 'value',
                              'code' : VALUE_IS_NOT_A_SET,
                              'caption' : '{0} is not a set'.format(data)})
 
