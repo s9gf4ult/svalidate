@@ -316,6 +316,24 @@ class DateTime(Validator):
                              'code' : DATETIME_VALIDATION_FAILED,
                              'caption' : 'can not construct datetime because {0}'.format(str(e))})
 
+class DateTimeString(Validator):
+    def __call__(self, vdr, appender, data):
+        erl = []
+        vdr._validate(erl, '', data)
+        if len(erl) > 0:
+            appender += erl
+            return
+        for fmt in ['%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S']:
+            try:
+                datetime.datetime.strptime(data, fmt)
+            except ValueError:
+                pass
+            else:
+                return
+        appender.append({'type' : 'value',
+                         'code' : DATETIME_VALIDATION_FAILED,
+                         'caption' : u'value {0} does not match datetime format'.format(data)})
+
 class Length(Validator):
     
     def __init__(self, low=0, high=None):

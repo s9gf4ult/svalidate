@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from svalidate import Validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime, Length, \
+from svalidate import Validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime, DateTimeString, Length, \
     NO_ONE_VALIDATION_FAILED, EQUAL_VALIDATION_FAILED, VALUE_IS_NOT_A_STRING, ANY_VALIDATION_FAILED,\
     REGEXP_MATCH_FAILED, VALUE_IS_NOT_A_BOOLEAN, DATETIME_VALIDATION_FAILED, VALUE_IS_NOT_AN_INT, LENGTH_VALIDATION_FAILED, \
     EACH_VALIDATION_FAILED
@@ -176,7 +176,7 @@ class Test(unittest.TestCase):
                         'values' : [{'value' : 'jsijs',
                                      'caption' : 'isjijs'},
                                     {'value' : 'eijfijf'}]})
-        
+
         self.assertEqual(None, v.validate([{'type' : Equal('dictionary'),
                                             'code' : Equal('enum'),
                                             'error' : [{'type' : Equal('value'),
@@ -201,7 +201,7 @@ class Test(unittest.TestCase):
                         'values' : [{'value' : 'jsijs',
                                      'caption' : 'is>jijs'},
                                     {'value' : 'eijfijf'}]})
-        
+
         self.assertEqual(None, v.validate([{'type' : Equal('dictionary'),
                                             'code' : Equal('values'),
                                             'error' : [{'type' : Equal('list'),
@@ -230,7 +230,7 @@ class Test(unittest.TestCase):
                                             'code' : Equal(DATETIME_VALIDATION_FAILED),
                                             'caption' : ''}],
                                           r))
-        
+
         r = v.validate(DateTime(), {'year' : 2000.23,
                                     'month' : 10,
                                     'day' : 20,
@@ -243,7 +243,7 @@ class Test(unittest.TestCase):
                                                         'code' : Equal(VALUE_IS_NOT_AN_INT)}]}],
                                           r))
 
-        
+
 
         self.assertEqual(None, v.validate(Length(low=2), "sdf"))
         self.assertEqual(None, v.validate(Length(high=10), "asdfa"))
@@ -258,7 +258,7 @@ class Test(unittest.TestCase):
         self.assertEqual(None, v.validate([{'type' : Equal('value'),
                                             'code' : Equal(LENGTH_VALIDATION_FAILED)}],
                                           r))
-        
+
         r = v.validate(Length(4, 7), "345")
         self.assertEqual(None, v.validate([{'type' : Equal('value'),
                                             'code' : Equal(LENGTH_VALIDATION_FAILED)}],
@@ -277,7 +277,7 @@ class Test(unittest.TestCase):
                                                         'code' : Equal(LENGTH_VALIDATION_FAILED)}]}],
                                           r))
         r = v.validate(Each(Length(high=2), ['']), [0, 'asdf', 'asdf'])
-        
+
         self.assertEqual(None, v.validate([{'type' : Equal('value'),
                                             'code' : Equal(EACH_VALIDATION_FAILED),
                                             'error' : [Any({'type' : Equal('value'),
@@ -287,7 +287,28 @@ class Test(unittest.TestCase):
                                                             'error' : [{'type' : Equal('value'),
                                                                         'code' : Equal(VALUE_IS_NOT_A_STRING)}]})]}],
                                           r))
-                                                          
+
+        self.assertEqual(None, v.validate(DateTimeString(), '2010-10-20T20:20:20'))
+        self.assertEqual(None, v.validate(DateTimeString(), '2010-10-20 20:20:20'))
+        self.assertEqual(None, v.validate(DateTimeString(), '1984-01-20T20:20:20'))
+        r = v.validate(DateTimeString(), 'ajisdjfasd')
+        self.assertEqual(None, v.validate([{'type' : Equal('value'),
+                                            'code' : Equal(DATETIME_VALIDATION_FAILED)}],
+                                          r))
+        r = v.validate(DateTimeString(), '0000-10-20T20:20:20')
+        self.assertEqual(None, v.validate([{'type' : Equal('value'),
+                                            'code' : Equal(DATETIME_VALIDATION_FAILED)}],
+                                          r))
+        r = v.validate(DateTimeString(), '1234-10-44T20:20:20')
+        self.assertEqual(None, v.validate([{'type' : Equal('value'),
+                                            'code' : Equal(DATETIME_VALIDATION_FAILED)}],
+                                          r))
+        r = v.validate(DateTimeString(), '2000-10-20T20:20:60')
+        self.assertEqual(None, v.validate([{'type' : Equal('value'),
+                                            'code' : Equal(DATETIME_VALIDATION_FAILED)}],
+                                          r))
+
+
 
 
 if __name__ == "__main__":
