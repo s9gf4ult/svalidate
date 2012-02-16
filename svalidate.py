@@ -3,6 +3,7 @@
 
 import re
 import datetime
+import json
 
 VALUE_IS_NOT_A_DICTIONARY=0
 VALUE_IS_NOT_A_LIST=1
@@ -19,6 +20,7 @@ REGEXP_SEARCH_FAILED=11
 EQUAL_VALIDATION_FAILED=12
 DATETIME_VALIDATION_FAILED=13
 LENGTH_VALIDATION_FAILED=14
+JSON_VALIDATION_FAILED=15
 
 
 class Validate(object):
@@ -362,5 +364,21 @@ class Length(Validator):
         return
     
         
-        
-            
+class JsonString(Validator):
+    """
+    """
+    
+    def __init__(self, validator):
+        self._validator = validator
+
+    def __call__(self, vdr, appender, data):
+        dec = json.JSONDecoder()
+        dt = None
+        try:
+            dt = dec.decode(data)
+        except ValueError:
+            appender.append({'type' : 'value',
+                             'code' : JSON_VALIDATION_FAILED,
+                             'caption' : 'value "{0}" is not json parsable'.format(data)})
+            return
+        vdr._validate(appender, self._validator, dt)

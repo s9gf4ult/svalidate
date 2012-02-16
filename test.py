@@ -3,9 +3,10 @@
 
 import unittest
 from svalidate import Validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime, DateTimeString, Length, \
-    NO_ONE_VALIDATION_FAILED, EQUAL_VALIDATION_FAILED, VALUE_IS_NOT_A_STRING, ANY_VALIDATION_FAILED,\
+    JsonString, NO_ONE_VALIDATION_FAILED, EQUAL_VALIDATION_FAILED, VALUE_IS_NOT_A_STRING, ANY_VALIDATION_FAILED,\
     REGEXP_MATCH_FAILED, VALUE_IS_NOT_A_BOOLEAN, DATETIME_VALIDATION_FAILED, VALUE_IS_NOT_AN_INT, LENGTH_VALIDATION_FAILED, \
-    EACH_VALIDATION_FAILED
+    EACH_VALIDATION_FAILED, JSON_VALIDATION_FAILED
+import json
 
 class Test(unittest.TestCase):
     def test_something(self, ):
@@ -307,8 +308,34 @@ class Test(unittest.TestCase):
         self.assertEqual(None, v.validate([{'type' : Equal('value'),
                                             'code' : Equal(DATETIME_VALIDATION_FAILED)}],
                                           r))
+        self.assertEqual(None, v.validate(DateTimeString(), '2010-10-20'))
 
+        enc = json.JSONEncoder()
+        
+        self.assertEqual(None, v.validate(JsonString({'uuid' : '',
+                                                      'name' : goodstr,
+                                                      'descr' : OrNone(goodstr),
+                                                      'tp' : '',
+                                                      'enum' : True,
+                                                      'default' : OrNone(goodstr),
+                                                      'values' : OrNone([{'value' : goodstr,
+                                                                          'caption' : OrNone(goodstr),
+                                                                          }]),
+                                                      }),
 
+                                          enc.encode({'uuid' : 'sdf323rsd9fusdf',
+                                                      'name' : 'you',
+                                                      'tp' : 'ijsijs',
+                                                      'enum' : True,
+                                                      'values' : [{'value' : 'jsijs',
+                                                                   'caption' : 'isjijs'},
+                                                                  {'value' : 'eijfijf'}]})))
+
+        r = v.validate(JsonString({'name' : goodstr}),
+                       'asdfasdf')
+        self.assertEqual(None, v.validate([{'type' : Equal('value'),
+                                            'code' : Equal(JSON_VALIDATION_FAILED)}],
+                                          r))
 
 
 if __name__ == "__main__":
