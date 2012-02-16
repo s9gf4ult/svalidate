@@ -323,7 +323,7 @@ class DateTimeString(Validator):
         if len(erl) > 0:
             appender += erl
             return
-        for fmt in ['%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S']:
+        for fmt in ['%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d']:
             try:
                 datetime.datetime.strptime(data, fmt)
             except ValueError:
