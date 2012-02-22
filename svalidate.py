@@ -21,6 +21,7 @@ EQUAL_VALIDATION_FAILED=12
 DATETIME_VALIDATION_FAILED=13
 LENGTH_VALIDATION_FAILED=14
 JSON_VALIDATION_FAILED=15
+CAN_NOT_PROCESS_VALUE=16
 
 
 class Validate(object):
@@ -382,3 +383,23 @@ class JsonString(Validator):
                              'caption' : 'value "{0}" is not json parsable'.format(data)})
             return
         vdr._validate(appender, self._validator, dt)
+
+class Able(Validator):
+    """Validates that argument can be processed by given function without errors
+    """
+    
+    def __init__(self, fnc):
+        if not callable(fnc):
+            raise ValueError('Able validator: given object must be callable') 
+        self._fnc = fnc
+
+    def __call__(self, vdr, appender, data):
+        try:
+            self._fnc(data)
+        except Exception as e:
+            appender.append({'type' : 'value',
+                             'code' : CAN_NOT_PROCESS_VALUE,
+                             'caption' : 'while processing value {0} by function {1} an error was occured: {2}'.format(data,
+                                                                                                                       self._fnc.__name__ if hasattr(self._fnc, '__name__') else self._fnc,
+                                                                                                                       str(e))})
+        
