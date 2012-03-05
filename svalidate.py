@@ -377,7 +377,7 @@ class JsonString(Validator):
         dt = None
         try:
             dt = dec.decode(data)
-        except ValueError:
+        except ValueError, TypeError:
             appender.append({'type' : 'value',
                              'code' : JSON_VALIDATION_FAILED,
                              'caption' : 'value "{0}" is not json parsable'.format(data)})
