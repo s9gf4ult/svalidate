@@ -345,6 +345,11 @@ class Test(unittest.TestCase):
                                           r))
         self.assertRaises(ValueError, Able, 'not callable argument')
 
+        r = v.validate(JsonString(''), None)
+        self.assertEqual(None, v.validate([{'type' : Equal('value'),
+                                            'code' : Equal(JSON_VALIDATION_FAILED)}],
+                                          r))
+
 
 if __name__ == "__main__":
     unittest.main()

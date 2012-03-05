@@ -377,10 +377,15 @@ class JsonString(Validator):
         dt = None
         try:
             dt = dec.decode(data)
-        except ValueError, TypeError:
+        except ValueError:
             appender.append({'type' : 'value',
                              'code' : JSON_VALIDATION_FAILED,
                              'caption' : 'value "{0}" is not json parsable'.format(data)})
+            return
+        except TypeError:
+            appender.append({'type' : 'value',
+                             'code' : JSON_VALIDATION_FAILED,
+                             'caption' : 'value "{0}" is not even string or buffer'.format(data)})
             return
         vdr._validate(appender, self._validator, dt)
 
