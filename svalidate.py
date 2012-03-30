@@ -22,6 +22,7 @@ DATETIME_VALIDATION_FAILED=13
 LENGTH_VALIDATION_FAILED=14
 JSON_VALIDATION_FAILED=15
 CAN_NOT_PROCESS_VALUE=16
+VALUE_IS_NOT_CHECKED=17
 
 
 class Validate(object):
@@ -407,4 +408,16 @@ class Able(Validator):
                              'caption' : 'while processing value {0} by function {1} an error was occured: {2}'.format(data,
                                                                                                                        self._fnc.__name__ if hasattr(self._fnc, '__name__') else self._fnc,
                                                                                                                        str(e))})
-        
+class Checkable(Validator):
+
+    def __init__(self, fnc, capt):
+        if not callable(fnc):
+            raise ValueError('Checkable validator: given object is not callable')
+        self._fnc = fnc
+        self._capt = capt
+
+    def __call__(self, vdr, appender, data):
+        if not self._fnc(data):
+            appender.append({'type' : 'value',
+                             'code' : VALUE_IS_NOT_CHECKED,
+                             'caption' : self._capt})

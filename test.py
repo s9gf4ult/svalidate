@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from svalidate import Validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime, DateTimeString, Length, \
+from svalidate import Validate, OrNone, Any, Each, NoOne, Equal, RegexpMatch, RegexpSearch, DateTime, DateTimeString, Length, Checkable, \
     JsonString, Able, NO_ONE_VALIDATION_FAILED, EQUAL_VALIDATION_FAILED, VALUE_IS_NOT_A_STRING, ANY_VALIDATION_FAILED,\
     REGEXP_MATCH_FAILED, VALUE_IS_NOT_A_BOOLEAN, DATETIME_VALIDATION_FAILED, VALUE_IS_NOT_AN_INT, LENGTH_VALIDATION_FAILED, \
-    EACH_VALIDATION_FAILED, JSON_VALIDATION_FAILED, CAN_NOT_PROCESS_VALUE
+    EACH_VALIDATION_FAILED, JSON_VALIDATION_FAILED, CAN_NOT_PROCESS_VALUE, VALUE_IS_NOT_CHECKED
 import json
 
 class Test(unittest.TestCase):
@@ -349,6 +349,15 @@ class Test(unittest.TestCase):
         self.assertEqual(None, v.validate([{'type' : Equal('value'),
                                             'code' : Equal(JSON_VALIDATION_FAILED)}],
                                           r))
+
+        r = v.validate(Checkable(lambda a: float(a) > 0, 'blabla'), '-224')
+        self.assertEqual(None, v.validate([{'type' : Equal('value'),
+                                            'code' : Equal(VALUE_IS_NOT_CHECKED),
+                                            'caption' : Equal('blabla')}],
+                                          r))
+        r = v.validate(Checkable(lambda a: float(a) > 0, 'blabla'), '224')
+        self.assertEqual(None, r)
+        
 
 
 if __name__ == "__main__":
